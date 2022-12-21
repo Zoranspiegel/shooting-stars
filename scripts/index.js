@@ -54,7 +54,16 @@ function animate() {
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   //Render Projectiles
   projectiles.forEach((p, i) => {
+    if (
+      p.x < 0 ||
+      p.x > canvas.width ||
+      p.y < 0 ||
+      p.y > canvas.height
+    ) {
+      projectiles.splice(i, 1);
+    } else {
       p.update();
+    }
   });
   //Render Player
   player.draw();
