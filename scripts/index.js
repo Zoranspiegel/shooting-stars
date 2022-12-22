@@ -101,6 +101,16 @@ function animate() {
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   //Render Projectiles
   projectiles.forEach((p, i) => {
+    //Projectile/Enemy collision
+    enemies.forEach((e, j) => {
+      const dist = Math.hypot(p.x - e.x, p.y - e.y);
+      if (dist - p.radius - e.radius <= 0) {
+        projectiles.splice(i, 1);
+        enemies.splice(j, 1);
+      }
+    });
+    ////////////////////////////
+    //Clean or Render
     if (
       p.x < 0 ||
       p.x > canvas.width ||
@@ -114,6 +124,12 @@ function animate() {
   });
   //Render Enemies
   enemies.forEach((e, j) => {
+    //Enemy/Player collision/////////////////////////////////
+    const dist = Math.hypot(e.x - player.x, e.y - player.y);
+    if (dist - e.radius - player.radius <= 0) {
+      cancelAnimationFrame(animationFrameId);
+    }
+    /////////////////////////////////////////////////////////
     e.update();
   })
   //Render Player
