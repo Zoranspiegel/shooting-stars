@@ -66,9 +66,38 @@ class Enemy {
   }
 }
 
+class Particle {
+  constructor(x, y, radius, color, mX, mY) {
+    this.x = x;
+    this.y = y;
+    this.radius = radius;
+    this.color = color;
+    this.mX = mX;
+    this.mY = mY;
+    this.alpha = 1;
+  }
+  draw() {
+    ctx.save();
+    ctx.globalAlpha = this.alpha;
+    ctx.beginPath();
+    ctx.fillStyle = this.color;
+    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
+    ctx.fill();
+    ctx.closePath();
+    ctx.restore();
+  }
+  update() {
+    this.draw();
+    this.alpha -= 0.01;
+    this.x += this.mX;
+    this.y += this.mY;
+  }
+}
+
 const player = new Player(canvas.width / 2, canvas.height / 2, 20, "yellow");
 const projectiles = [];
 const enemies = [];
+const particles = [];
 
 //SPAWN_ENEMIES
 let spawnId;
@@ -101,15 +130,23 @@ function animate() {
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   //Render Projectiles
   projectiles.forEach((p, i) => {
-    //Projectile/Enemy collision
+    //Projectile/Enemy collision//////////////////////
     enemies.forEach((e, j) => {
       const dist = Math.hypot(p.x - e.x, p.y - e.y);
       if (dist - p.radius - e.radius <= 0) {
+        //SPAWN_PARTICLES////////////////////
+        for (let i = 0; i < e.radius * 2; i++) {
+          const radius = Math.random() * (3 - 1) + 1;
+          const mX = (Math.random() - 0.5) * 3;
+          const mY = (Math.random() - 0.5) * 3;
+          particles.push(new Particle(p.x, p.y, radius, e.color, mX, mY));
+        }
+        /////////////////////////////////////
         projectiles.splice(i, 1);
         enemies.splice(j, 1);
       }
     });
-    ////////////////////////////
+    //////////////////////////////////////////////////
     //Clean or Render
     if (
       p.x < 0 ||
@@ -131,6 +168,14 @@ function animate() {
     }
     /////////////////////////////////////////////////////////
     e.update();
+  })
+  //Render Particles
+  particles.forEach((pt, i) => {
+    if (pt.alpha <= 0) {
+      particles.splice(i, 1);
+    } else {
+      pt.update();
+    }
   })
   //Render Player
   player.draw();
