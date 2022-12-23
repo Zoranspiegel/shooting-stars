@@ -6,3 +6,10 @@ body{
 canvas{
   display: block;
 }
+#score{
+  user-select: none;
+  position: absolute;
+  margin: 10px;
+  color: greenyellow;
+  font-family: "Bauhaus 93";
+}

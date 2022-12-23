@@ -2,6 +2,8 @@ const canvas = document.getElementById("layer1");
 canvas.width = innerWidth;
 canvas.height = innerHeight;
 const ctx = canvas.getContext("2d");
+const points = document.getElementById("points");
+let score = 0;
 
 ///CLASSES
 class Player {
@@ -142,6 +144,8 @@ function animate() {
           particles.push(new Particle(p.x, p.y, radius, e.color, mX, mY));
         }
         /////////////////////////////////////
+        score += 100;
+        points.innerHTML = score;
         projectiles.splice(i, 1);
         enemies.splice(j, 1);
       }
