@@ -4,6 +4,12 @@ canvas.height = innerHeight;
 const ctx = canvas.getContext("2d");
 const points = document.getElementById("points");
 let score = 0;
+const startUI = document.getElementById("startUI");
+startUI.style.width = `${canvas.width / 4}px`;
+startUI.style.top = `${canvas.height / 2 + 40}px`;
+startUI.style.left = `${canvas.width / 2 - (canvas.width / 8) - 5}px`;
+const scoreUI = document.getElementById("scoreUI");
+const start = document.getElementById("start");
 
 ///CLASSES
 class Player {
@@ -97,9 +103,9 @@ class Particle {
 }
 
 const player = new Player(canvas.width / 2, canvas.height / 2, 20, "yellow");
-const projectiles = [];
-const enemies = [];
-const particles = [];
+let projectiles = [];
+let enemies = [];
+let particles = [];
 
 //SPAWN_ENEMIES
 let spawnId;
@@ -120,9 +126,9 @@ function spawnEnemies() {
     const mX = Math.cos(angle);
     const mY = Math.sin(angle);
     enemies.push(new Enemy(x, y, radius, color, mX, mY));
+    console.log("Enemy Spawn");
   }, 2000);
 }
-spawnEnemies();
 
 ///ANIMATION_FRAMES
 function animate() {
@@ -173,8 +179,11 @@ function animate() {
       ctx.fillStyle = "greenyellow";
       ctx.textAlign = "center";
       ctx.font = '40px "Bauhaus 93"';
-      ctx.fillText("GAME OVER", canvas.width / 2, canvas.height / 2 - 80);
+      ctx.fillText("GAME OVER", canvas.width / 2, canvas.height / 2 - 40);
       cancelAnimationFrame(animationFrameId);
+      clearInterval(spawnId);
+      scoreUI.innerHTML = score;
+      startUI.style.display = "flex";
     }
   })
   //Render Particles
@@ -188,9 +197,19 @@ function animate() {
   //Render Player
   player.draw();
 }
-animate();
 
 ///EVENT_LISTENERS
+start.addEventListener("click", (e) => {
+  startUI.style.display = "none";
+  projectiles = [];
+  enemies = [];
+  particles = [];
+  score = 0;
+  points.innerHTML = score;
+  animate();
+  spawnEnemies();
+})
+
 addEventListener("click", (e) => {
   const angle = Math.atan2(e.clientY - player.y, e.clientX - player.x);
   const mX = Math.cos(angle) * 5;
