@@ -165,13 +165,17 @@ function animate() {
   });
   //Render Enemies
   enemies.forEach((e, j) => {
+    e.update();
     //Enemy/Player collision/////////////////////////////////
     const dist = Math.hypot(e.x - player.x, e.y - player.y);
     if (dist - e.radius - player.radius <= 0) {
+      ctx.beginPath();
+      ctx.fillStyle = "greenyellow";
+      ctx.textAlign = "center";
+      ctx.font = '40px "Bauhaus 93"';
+      ctx.fillText("GAME OVER", canvas.width / 2, canvas.height / 2 - 80);
       cancelAnimationFrame(animationFrameId);
     }
-    /////////////////////////////////////////////////////////
-    e.update();
   })
   //Render Particles
   particles.forEach((pt, i) => {
