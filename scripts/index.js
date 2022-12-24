@@ -4,6 +4,7 @@ canvas.height = innerHeight;
 const ctx = canvas.getContext("2d");
 const points = document.getElementById("points");
 let score = 0;
+let prevScore = 0;
 const startUI = document.getElementById("startUI");
 startUI.style.width = `${canvas.width / 4}px`;
 startUI.style.top = `${canvas.height / 2 + 40}px`;
@@ -11,6 +12,7 @@ startUI.style.left = `${canvas.width / 2 - (canvas.width / 8) - 5}px`;
 const scoreUI = document.getElementById("scoreUI");
 const start = document.getElementById("start");
 let fire = false;
+let interval = 2000;
 
 ///CLASSES
 class Player {
@@ -127,10 +129,9 @@ function spawnEnemies() {
     const mX = Math.cos(angle);
     const mY = Math.sin(angle);
     enemies.push(new Enemy(x, y, radius, color, mX, mY));
-    console.log("Enemy Spawn");
-  }, 1500);
+  }, interval);
 }
-
+let valve;
 ///ANIMATION_FRAMES
 function animate() {
   const animationFrameId = requestAnimationFrame(animate);
@@ -150,19 +151,19 @@ function animate() {
           const mY = (Math.random() - 0.5) * 3;
           particles.push(new Particle(p.x, p.y, radius, e.color, mX, mY));
         }
-        /////////////////////////////////////
+        //ENEMY_SHRINK////////////
         if (e.radius - 10 > 10) {
           e.radius -= 10;
           projectiles.splice(i, 1);
         } else {
           score += 100;
+          valve = true;
           points.innerHTML = score;
           projectiles.splice(i, 1);
           enemies.splice(j, 1);
         }
       }
     });
-    //////////////////////////////////////////////////
     //Clean or Render
     if (
       p.x < 0 ||
@@ -175,6 +176,14 @@ function animate() {
       p.update();
     }
   });
+  //Increase Difficulty
+  if (valve && (score === prevScore + 1000)) {
+    prevScore = score;
+    clearInterval(spawnId);
+    interval -= 100;
+    spawnEnemies();
+    valve = false;
+  }
   //Render Enemies
   enemies.forEach((e, j) => {
     e.update();
@@ -188,6 +197,7 @@ function animate() {
       ctx.fillText("GAME OVER", canvas.width / 2, canvas.height / 2 - 40);
       cancelAnimationFrame(animationFrameId);
       clearInterval(spawnId);
+      interval = 2000;
       scoreUI.innerHTML = score;
       startUI.style.display = "flex";
       fire = false;
@@ -212,6 +222,7 @@ start.addEventListener("click", (e) => {
   enemies = [];
   particles = [];
   score = 0;
+  prevScore = 0;
   points.innerHTML = score;
   animate();
   spawnEnemies();
