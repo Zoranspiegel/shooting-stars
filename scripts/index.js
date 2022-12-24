@@ -128,7 +128,7 @@ function spawnEnemies() {
     const mY = Math.sin(angle);
     enemies.push(new Enemy(x, y, radius, color, mX, mY));
     console.log("Enemy Spawn");
-  }, 2000);
+  }, 1500);
 }
 
 ///ANIMATION_FRAMES
@@ -151,10 +151,15 @@ function animate() {
           particles.push(new Particle(p.x, p.y, radius, e.color, mX, mY));
         }
         /////////////////////////////////////
-        score += 100;
-        points.innerHTML = score;
-        projectiles.splice(i, 1);
-        enemies.splice(j, 1);
+        if (e.radius - 10 > 10) {
+          e.radius -= 10;
+          projectiles.splice(i, 1);
+        } else {
+          score += 100;
+          points.innerHTML = score;
+          projectiles.splice(i, 1);
+          enemies.splice(j, 1);
+        }
       }
     });
     //////////////////////////////////////////////////
@@ -210,9 +215,9 @@ start.addEventListener("click", (e) => {
   points.innerHTML = score;
   animate();
   spawnEnemies();
-  setTimeout(()=>{
+  setTimeout(() => {
     fire = true;
-  },100)
+  }, 100)
 })
 
 addEventListener("click", (e) => {
