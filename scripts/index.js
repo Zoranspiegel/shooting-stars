@@ -10,6 +10,7 @@ startUI.style.top = `${canvas.height / 2 + 40}px`;
 startUI.style.left = `${canvas.width / 2 - (canvas.width / 8) - 5}px`;
 const scoreUI = document.getElementById("scoreUI");
 const start = document.getElementById("start");
+let fire = false;
 
 ///CLASSES
 class Player {
@@ -184,6 +185,7 @@ function animate() {
       clearInterval(spawnId);
       scoreUI.innerHTML = score;
       startUI.style.display = "flex";
+      fire = false;
     }
   })
   //Render Particles
@@ -208,11 +210,16 @@ start.addEventListener("click", (e) => {
   points.innerHTML = score;
   animate();
   spawnEnemies();
+  setTimeout(()=>{
+    fire = true;
+  },100)
 })
 
 addEventListener("click", (e) => {
-  const angle = Math.atan2(e.clientY - player.y, e.clientX - player.x);
-  const mX = Math.cos(angle) * 5;
-  const mY = Math.sin(angle) * 5;
-  projectiles.push(new Projectile(player.x, player.y, 5, "red", mX, mY));
+  if (fire) {
+    const angle = Math.atan2(e.clientY - player.y, e.clientX - player.x);
+    const mX = Math.cos(angle) * 5;
+    const mY = Math.sin(angle) * 5;
+    projectiles.push(new Projectile(player.x, player.y, 5, "red", mX, mY));
+  }
 });
